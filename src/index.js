@@ -70,7 +70,7 @@ app.get('/tasks/:id', (req,res)=>{
 
     Task.findById(_id).then((task)=>{
         if(!task){
-           return res.status(400).send()
+           return res.status(404).send()
         }
 
         res.send(task)
