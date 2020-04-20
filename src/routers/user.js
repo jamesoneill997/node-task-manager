@@ -39,7 +39,7 @@
     
     router.patch('/users/:id', async (req, res) => {
         const updates = Object.keys(req.body)
-        const allowedUpdates = ['name', 'gender', 'age', 'email']
+        const allowedUpdates = ['name', 'gender', 'age', 'email', 'password']
         const isValidOperation = updates.every(update =>{
             return allowedUpdates.includes(update)
         })
@@ -51,13 +51,17 @@
     
     
         try {
-            const user = await User.findByIdAndUpdate(_id, req.body, {new:true, runValidators: true})
+
+            const user = await User.findById(_id)
+            updates.forEach((update)=>user[update] = req.body[update])
+            await user.save()           
+            
             if (!user){
                 return res.status(404).send('User does not exist')
             }
             res.send('User updated successfully.')
         } catch (error) {
-            res.status(400).send('Bad request')
+            res.status(400).send('Bad request' + error)
         }
     })
     
