@@ -24,7 +24,7 @@
         try {
             const user = await User.findByCredentials(req.body.email, req.body.password)
             const token = await user.generateAuthToken()
-            res.send({user, token})
+            res.send({user, token:token})
         } catch (error) {
             console.log(error)
             res.status(400).send(error)
@@ -53,30 +53,15 @@
             console.log(error)
             res.status(500).send(error)
         }
-    })
+    })  
     
-    router.get('/users/:id', async (req, res) => {
-        const _id = req.params.id
-    
-        try {
-            const user = await User.findById(_id)
-            if (!user) {
-                return res.status(404).send()
-            }
-            res.send(user)
-        } catch (error) {
-            res.status(500).send()
-        }
-    })
-    
-    
-    router.patch('/users/:id', async (req, res) => {
+    router.patch('/users/me', auth, async (req, res) => {
         const updates = Object.keys(req.body)
         const allowedUpdates = ['name', 'gender', 'age', 'email', 'password']
         const isValidOperation = updates.every(update =>{
             return allowedUpdates.includes(update)
         })
-        const _id = req.params.id
+        const _id = await req.user._id
     
         if(!isValidOperation){
             return res.status(400).send('This update is not permitted')
@@ -85,7 +70,7 @@
     
         try {
 
-            const user = await User.findById(_id)
+            const user = await req.user
             updates.forEach((update)=>user[update] = req.body[update])
             await user.save()           
             
@@ -98,13 +83,10 @@
         }
     })
     
-    router.delete('/users/:id', async(req, res)=>{
-        const _id = req.params.id
+    router.delete('/users/me', auth, async(req, res)=>{
+        const _id = req.user._id
         try {
-            const user = await User.findByIdAndDelete(_id)
-            if (!user){
-                return res.status(404).send('User does not exist')
-            }
+             await req.user.remove()
             res.send('User successfully deleted.')
         } catch (error) {
             res.status(500).send(error)

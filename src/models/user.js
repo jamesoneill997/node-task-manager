@@ -54,6 +54,22 @@ userSchema.methods.generateAuthToken = async function (){
 
 }
 
+userSchema.methods.toJSON = function(){
+    const user = this
+    const userObject = user.toObject()
+
+    delete userObject.password
+    delete userObject.tokens
+
+    return userObject
+}
+
+userSchema.virtual('tasks',{
+    ref : 'Task',
+    localField : '_id',
+    foreignField : 'owner'
+})
+
 userSchema.statics.findByCredentials = async (email,password) =>{
         const user = await User.findOne({email})
         if(!user){
@@ -66,7 +82,12 @@ userSchema.statics.findByCredentials = async (email,password) =>{
             throw new Error('Invalid credentials')
         }
         return user
-}       
+}
+
+
+
+
+
 //hash password and store
 userSchema.pre('save', async function(next){
     const user = this
