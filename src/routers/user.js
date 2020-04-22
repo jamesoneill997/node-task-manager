@@ -1,7 +1,9 @@
     const express = require('express')
     const User = require('../models/user')
     const auth = require('../middleware/auth')
+    const upload = require('../middleware/upload')
     const router = new express.Router()
+   
 
     router.post('/users', async (req,res)=>{
         const user = new User(req.body)
@@ -92,5 +94,9 @@
             res.status(500).send(error)
         }
     })
+
+    router.post('/users/me/avatar', upload.single('avatar'),(req, res) =>{
+        res.send('Image successfully uploaded')
+})
     
     module.exports = router
