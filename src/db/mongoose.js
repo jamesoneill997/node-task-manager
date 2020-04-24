@@ -1,9 +1,15 @@
 const mongoose = require('mongoose')
+const dotenv = require('dotenv')
 
+dotenv.config();
 
-mongoose.connect(process.env.MONGODB_URL, {
+console.log(process.env.MONGODB_URL)
+
+const connection = mongoose.connect(process.env.MONGODB_URL, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology :true,
     useFindAndModify: false
 })
+
+module.exports = connection
