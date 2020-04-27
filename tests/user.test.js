@@ -23,14 +23,6 @@ beforeEach(async()=>{
     await new User(userOne).save()
 })
 
-test('Should sign up new user', async () => {
-    await request(app).post('/users').send({
-        name: 'James',
-        email: 'jimmynail@gmail.com',
-        password: 'hellothere'
-    }).expect(201)
-})
-
 test('Should log in existing user', async () => {
     await request(app).post('/users/login').send({
         email: userOne.email,
@@ -51,7 +43,15 @@ test('Should not log in user', async () => {
     await request(app).
     post('/users/login').
     send({
-        email: userOne.email,
+        email: 'gimm@gmail.com',
         password: 'fuckoffyouprick'
     }).expect(400)
+})
+
+test('Should sign up new user', async () => {
+    await request(app).post('/users').send({
+        name: 'James',
+        email: 'jimmynail@gmail.com',
+        password: 'hellothere'
+    }).expect(201)
 })
