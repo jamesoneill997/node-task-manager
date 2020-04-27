@@ -52,10 +52,6 @@ test('Should not log in user', async () => {
     post('/users/login').
     send({
         email: userOne.email,
-        password: 'safjlsdf'
-    })
-})
-
-afterEach(async()=>{
-    await User.deleteMany()
+        password: 'fuckoffyouprick'
+    }).expect(400)
 })
